@@ -1,0 +1,26 @@
+version: "26" # docker version
+services:
+  www: # this is the browser config that we will use to show out results
+    build:
+      context: . #this is for the dockerfile config
+      dockerfile: Dockerfile # this is for the dockerfile config
+    volumes:
+      - "./:/var/www/html"
+    ports:
+      - 80:80
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=cloud_project
+      - MYSQL_USER=php_docker
+      - MYSQL_PASSWORD=password # this should live in a env var
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1 #equivalent to true
+    volumes:
+      - "./db:/docker-entrypoint-initdb.d" # sync persistent sql files with container
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8001:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
